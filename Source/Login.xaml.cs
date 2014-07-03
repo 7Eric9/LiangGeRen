@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -26,6 +27,7 @@ namespace LiangGeRen
 	public partial class MainWindow : Window
 	{
 		MoodDataManager _moodeDataManager;
+		User user;
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -35,7 +37,10 @@ namespace LiangGeRen
 
 		private void InitialBinding()
 		{
-			
+			user = new User();
+			Binding binding = new Binding("IsLoginSucceed") { Source = user };
+			binding.Converter = new VisibiltyConverter();
+			errorData.SetBinding(Label.VisibilityProperty, binding);
 		}
 
 		private void InitializeRequest()
@@ -44,13 +49,16 @@ namespace LiangGeRen
 			_moodeDataManager.InitailRequest();
 		}
 
+		private bool isProcessLogin = false;
 		private void OnClick(object sender, RoutedEventArgs e)
 		{
-			erroInfo.Visibility = System.Windows.Visibility.Visible;
-			//user.UserName = "shit";
-			//Func<string, bool> login = Login;
-			//string un = userName.Text;
-			//IAsyncResult asynResult = login.BeginInvoke(un, LoginCompleted, login);
+			if (!isProcessLogin)
+			{
+				isProcessLogin = true;
+				Func<string, bool> login = Login;
+				string un = userName.Text;
+				IAsyncResult asynResult = login.BeginInvoke(un, LoginCompleted, login);
+			}
 		}
 
 		private delegate bool LoginHandler();
@@ -61,6 +69,7 @@ namespace LiangGeRen
 			bool isSuccessed = (asynResult.AsyncState as Func<string, bool>).EndInvoke(asynResult);
 			if (isSuccessed)
 			{
+				user.IsLoginSucceed = true;
 				Action action = () => {
 					MainPage mainPage = new MainPage(_moodeDataManager);
 					this.Hide();
@@ -71,7 +80,7 @@ namespace LiangGeRen
 			else
 			{
 				userName.Dispatcher.BeginInvoke(new Action(() => { userName.Text = string.Empty; }), null);
-				MessageBox.Show("failed");
+				user.IsLoginSucceed = false;
 			}
 		}
 
@@ -94,7 +103,7 @@ namespace LiangGeRen
 			return _moodeDataManager.Login(userName, pw);
 		}
 
-		const string UserNameKeyWords = "邮箱/用户名";
+		const string UserNameKeyWords = "邮箱";
 		private void userName_GotFocus(object sender, RoutedEventArgs e)
 		{
 			if (userName.Text == UserNameKeyWords)
@@ -113,5 +122,49 @@ namespace LiangGeRen
 				userName.Text = UserNameKeyWords;
 			}
 		}
+	}
+
+	internal class User : INotifyPropertyChanged
+	{
+		public string Name { get; set; }
+		public string PassWord { get; set; }
+
+		private bool _isLoginSucceed = true;
+		public bool IsLoginSucceed 
+		{
+			get
+			{
+				return _isLoginSucceed;
+			}
+			set
+			{
+				_isLoginSucceed = value;
+				OnPropertyChnaged("IsLoginSucceed");
+			}
+		}
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		private void OnPropertyChnaged(string propertyName)
+		{
+			PropertyChangedEventHandler handler = PropertyChanged;
+			if (handler != null)
+				handler(this, new PropertyChangedEventArgs(propertyName));
+		}
+	}
+
+	public class VisibiltyConverter : IValueConverter
+	{
+ 		 public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		 {
+			 var isNotVisible = (bool)value;
+			 if (isNotVisible)
+				 return Visibility.Collapsed;
+			 return Visibility.Visible;
+		 }
+
+		 public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		 {
+			 throw new NotImplementedException();
+		 }
 	}
 }
