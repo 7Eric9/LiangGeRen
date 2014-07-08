@@ -7,6 +7,70 @@
     <Window.Resources>
         <sys:String x:Key="ErroData">NoError</sys:String>
         <local:VisibiltyConverter x:Key="VisiblityConverter" />
+        <local:LengthConverter x:Key="lenConverter"/>
+        <Style TargetType="ComboBox" x:Key="customerComboBox">
+            <Setter Property="ItemTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <ContentPresenter Width="{Binding Path=Width, RelativeSource={RelativeSource TemplatedParent}}" HorizontalAlignment="{Binding HorizontalContentAlignment}" SnapsToDevicePixels="{Binding SnapsToDevicePixels}" VerticalAlignment="{Binding VerticalContentAlignment}">
+                            <ContentPresenter.Content>
+                                <Grid VerticalAlignment="Top" HorizontalAlignment="Left">
+
+                                    <Label x:Name="label" Content="{Binding}" Width="179"></Label>
+                                    <Button x:Name="innerBtn" HorizontalAlignment="Right" 
+                                            Width="15" Height="15" 
+                                            Visibility="Hidden" Click="innerBtn_Click" Tag="{Binding Path=Content, ElementName=label}">
+
+                                        <Button.Template>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border>
+                                                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Button.Template>
+                                        <Canvas x:Name="canvas1" 
+							HorizontalAlignment="Left" 
+							Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=Height}"
+							Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=Width}"
+							VerticalAlignment="Top">
+                                            <Line x:Name="line1" X1="0" Y1="0" 
+			X2="{Binding RelativeSource={RelativeSource AncestorType={x:Type Canvas}}, Path=Height,  Converter={StaticResource lenConverter}}" 
+			Y2="{Binding ElementName=canvas1, Path=Height,  Converter={StaticResource lenConverter}}" 
+			StrokeThickness="2" Stroke="White"></Line>
+                                            <Line x:Name="line2" X1="0" Y1="{Binding RelativeSource={RelativeSource AncestorType={x:Type Canvas}}, Path=Height, Converter={StaticResource lenConverter}}"
+			 X2="{Binding ElementName=canvas1, Path= Height,  Converter={StaticResource lenConverter}}" Y2="0"
+			  StrokeThickness="2" 
+			  Stroke="White"></Line>
+                                        </Canvas>
+                                    </Button>
+                                </Grid>
+                            </ContentPresenter.Content>
+                        </ContentPresenter>
+                        <DataTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Visibility" Value="Visible" TargetName="innerBtn"></Setter>
+                            </Trigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="Canvas" x:Key="runningTrigger">
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <EventTrigger.Actions>
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Duration="0:0:3" Storyboard.TargetProperty="Left" From="0" 
+                                                 To="517" RepeatBehavior="Forever" >
+
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger.Actions>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     <Grid ShowGridLines="True">
         <Grid.RowDefinitions>
@@ -17,9 +81,20 @@
         </Grid.RowDefinitions>
         <DockPanel Grid.Row="0"></DockPanel>
         <Canvas Grid.Row="1">
-            <ComboBox x:Name="userName" Text="邮箱" Foreground="Gray"  Height="23" Canvas.Left="243" Canvas.Top="22" Width="179" IsEditable="True" GotFocus="userName_GotFocus" LostFocus="userName_LostFocus" />
+            <ComboBox x:Name="userName" Text="邮箱" Foreground="Gray"  
+                      Height="23" Canvas.Left="243" Canvas.Top="22" Width="179" IsEditable="True" 
+                      Style="{StaticResource customerComboBox}"
+                      GotFocus="userName_GotFocus" LostFocus="userName_LostFocus" />
             <PasswordBox x:Name="passWord" Password="" Height="24" Canvas.Left="243" Canvas.Top="68" Width="179"/>
             <Image Height="100" Canvas.Left="98" Canvas.Top="22" Width="100"/>
+            <Canvas Height="3" Width="517">
+                <Canvas 
+                    Height="{Binding RelativeSource={ RelativeSource AncestorType={x:Type Canvas}}, Path= Height}"
+                    Width="40"
+                    Background="Blue"
+                Style="{StaticResource runningTrigger}"
+                    />
+                </Canvas>
         </Canvas>
         <DockPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,5">
             <Button Content="Button" HorizontalAlignment="Center" Width="147" Click="OnClick" />

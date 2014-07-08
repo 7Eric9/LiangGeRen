@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -28,6 +30,8 @@ namespace LiangGeRen
 	{
 		MoodDataManager _moodeDataManager;
 		User user;
+		ObservableCollection<string> userNames = new ObservableCollection<string>(); 
+		private const string userNamesFile = "userNames.txt";
 		public MainWindow()
 		{
 			InitializeComponent();
@@ -41,6 +45,24 @@ namespace LiangGeRen
 			Binding binding = new Binding("IsLoginSucceed") { Source = user };
 			binding.Converter = new VisibiltyConverter();
 			errorData.SetBinding(Label.VisibilityProperty, binding);
+
+			if (File.Exists(userNamesFile))
+			{
+				using (StreamReader sr = new StreamReader(userNamesFile))
+				{
+					String line = sr.ReadToEnd();
+					var rawNames = line.Split(',');
+					List<string> names = new List<string>();
+					foreach (var name in rawNames)
+					{
+						var tempName = name.Trim();
+						if (tempName.Length > 0)
+							names.Add(tempName);
+					}
+					userNames.AddRange(names);
+					userName.ItemsSource = userNames;
+				}
+			}
 		}
 
 		private void InitializeRequest()
@@ -54,11 +76,40 @@ namespace LiangGeRen
 		{
 			if (!isProcessLogin)
 			{
+				WriteToUserNamesFile(userName.Text);
 				isProcessLogin = true;
 				Func<string, bool> login = Login;
 				string un = userName.Text;
 				IAsyncResult asynResult = login.BeginInvoke(un, LoginCompleted, login);
 			}
+		}
+
+		private void WriteToUserNamesFile(string name)
+		{
+			if (File.Exists(userNamesFile) && !userNames.Any(s => s == name))
+			{
+				using (StreamWriter file = new StreamWriter(userNamesFile, true))
+				{
+					file.WriteAsync("," + name);
+				}
+			}
+ 
+		}
+
+		private void UpdateUserNamesFile()
+		{
+ 			if (File.Exists(userNamesFile))
+			{
+				File.WriteAllText(userNamesFile, String.Empty);
+				foreach (var un in userNames)
+				{
+					using (StreamWriter file = new StreamWriter(userNamesFile, true))
+					{
+						file.WriteAsync("," + un);
+					}
+				}
+			}
+			
 		}
 
 		private delegate bool LoginHandler();
@@ -122,6 +173,13 @@ namespace LiangGeRen
 				userName.Text = UserNameKeyWords;
 			}
 		}
+
+		private void innerBtn_Click(object sender, RoutedEventArgs e)
+		{
+			userNames.Remove((sender as Button).Tag.ToString());
+			UpdateUserNamesFile();
+			
+		}
 	}
 
 	internal class User : INotifyPropertyChanged
@@ -166,5 +224,21 @@ namespace LiangGeRen
 		 {
 			 throw new NotImplementedException();
 		 }
+	}
+
+	public class LengthConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			var origin = (double)value;
+			var newL = origin - 3.5;
+			return newL;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			throw new NotImplementedException();
+		}
+
 	}
 }
