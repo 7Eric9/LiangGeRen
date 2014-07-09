@@ -10,11 +10,18 @@ namespace LiangGeRen.Data
 	{
 		public MessageItem() { }
 
-		public MessageItem(string name, string message, string replyMessage)
+		public MessageItem(string name, string message, string replyMessage, string time)
 		{
 			_name = name;
 			_message = message;
 			_replyMessage = replyMessage;
+		}
+
+		public MessageItem(string name, string message, string time)
+		{
+			_name = name;
+			_message = message;
+			_time = time;
 		}
 
 		private string _name;
@@ -32,5 +39,11 @@ namespace LiangGeRen.Data
 		private string _replyMessage;
 		public string ReplyMessage
 		{ get { return _replyMessage; } }
+
+		private string _time;
+		public string Time
+		{
+			get { return _time; }
+		}
 	}
 }

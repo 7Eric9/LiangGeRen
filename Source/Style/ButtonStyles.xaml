@@ -1,11 +1,19 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing">
+
+    <SolidColorBrush Color="Blue" x:Key="BlueBrush"></SolidColorBrush>
+    <SolidColorBrush Color="White" x:Key="WhiteBrush"></SolidColorBrush>
     <Style x:Key="MessageIcon">
         <Setter Property="Control.Template">
             <Setter.Value>
                 <ControlTemplate>
-                    <ed:Callout AnchorPoint="0.2,1.2" HorizontalAlignment="Left" Height="22.5" Stroke="White" VerticalAlignment="Top" Width="34.5" StrokeThickness="2"/>
+                    <ed:Callout x:Name="message" AnchorPoint="0.2,1.2" HorizontalAlignment="Left" Height="22.5" Stroke="White" VerticalAlignment="Top" Width="34.5" StrokeThickness="2"/>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="message" Property="Stroke" Value="{StaticResource BlueBrush}"></Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

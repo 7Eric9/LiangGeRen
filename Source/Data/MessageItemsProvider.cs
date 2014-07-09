@@ -35,27 +35,20 @@ namespace LiangGeRen.Data
 
 			bool isValid = true;
 			bool readyToReadMessage = false;
-			bool closeMessageType = false;
 			bool readyToReadReplyMessage = false;
 			string name = string.Empty;
 			string message = string.Empty;
 			string replyMessage = string.Empty;
+			string time = string.Empty;
 			List<MessageItem> messageItems = new List<MessageItem>();
 			string content;
 			while ((content = reader.ReadLine()) != null)
 			{
-				if (content.Contains("你的邮箱或密码不符，请再试一次"))
+				if (content.Contains("你的邮箱或密码不符，请再试一次")
+					|| content.Contains("邮箱格式不正确"))
 				{
 					isValid = false;
 					break;
-				}
-				if (closeMessageType)
-				{
-					messageItems.Add(new MessageItem(name, message, replyMessage));
-					name = string.Empty;
-					message = string.Empty;
-					replyMessage = string.Empty;
-					closeMessageType = false;
 				}
 				if (readyToReadMessage)
 				{
@@ -66,14 +59,10 @@ namespace LiangGeRen.Data
 				{
 					replyMessage = content.Trim();
 					readyToReadReplyMessage = false;
-					closeMessageType = true;
 				}
 				if (content.Contains("m_qualifier q_says"))
 				{
-					int startIndex = content.IndexOf('>') + 1;
-					int endIdex = content.IndexOf("</span>");
-					int length = endIdex - startIndex;
-					name = content.Substring(startIndex, length);
+					name = AbstractContent(content);
 
 				}
 				if (content.Contains("entry-content"))
@@ -84,9 +73,27 @@ namespace LiangGeRen.Data
 				{
 					readyToReadReplyMessage = true;
 				}
+				if (content.Contains("timeago c_tx3"))
+				{
+					time= AbstractContent(content);
+
+					messageItems.Add(new MessageItem(name, message, replyMessage));
+					name = string.Empty;
+					message = string.Empty;
+					replyMessage = string.Empty;
+					time = string.Empty;
+				}
 			}
 			IsValid = isValid;
 			return messageItems;
+		}
+
+		private string AbstractContent(string content)
+		{
+			int startIndex = content.IndexOf('>') + 1;
+			int endIdex = content.IndexOf("</span>");
+			int length = endIdex - startIndex;
+			return content.Substring(startIndex, length);
 		}
 	}
 }

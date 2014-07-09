@@ -9,6 +9,7 @@
         </Style>
 
         <Style x:Key="BoyTheme2List" TargetType="ListBox">
+            <Setter Property="BorderThickness" Value="0"></Setter>
             <Setter Property="Background" Value="#FF2B3D51"></Setter>
         </Style>
 
@@ -78,13 +79,19 @@
         <Canvas Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Background="#FF3686BB" />
         <Label x:Name="userName" Padding="10,10,0,0" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="6" Foreground="WhiteSmoke" FontFamily="Comic Sans MS" Background="#FF4697CE" FontSize="16" >Hello, Eric</Label>
 
-        <ListBox Grid.Row="3" Grid.ColumnSpan="8" x:Name="listBox1" 
+        <ListBox Grid.Row="3" Grid.ColumnSpan="8" x:Name="messageListBox" 
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     Style="{StaticResource BoyTheme2List}"
+                 ItemTemplate="{StaticResource messageItemViewTemplate}"/>
+
+        <ListBox Grid.Row="3" Grid.ColumnSpan="8" x:Name="infoListBox" 
+                 Visibility="Collapsed"
                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      Style="{StaticResource BoyTheme2List}"
                  ItemTemplate="{StaticResource messageItemViewTemplate}"/>
 
         <Button Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource MessageIcon}" Margin="0,10,32,10" />
-        <Button Grid.Row="4" Grid.Column="5" Grid.ColumnSpan="3" Style="{StaticResource InfoIcon}" Margin="39,10,16,0"/>
+        <Button x:Name="infoButton" Grid.Row="4" Grid.Column="5" Grid.ColumnSpan="3" Style="{StaticResource InfoIcon}" Margin="39,10,16,0" Click="infoButton_Click"/>
         <Image Grid.ColumnSpan="3" Grid.Column="4" HorizontalAlignment="Left" Height="75" Margin="40,5,0,0" Grid.Row="1" VerticalAlignment="Top" Width="84" Source="Images/boy/cloud.png" RenderTransformOrigin="0.432,0.24" Stretch="Fill"/>
     </Grid>
 </Window>

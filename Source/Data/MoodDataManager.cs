@@ -21,6 +21,11 @@ namespace LiangGeRen.Data
 			_provider = new MessageItemsProvider();
 		}
 
+		internal HttpDataUtil HttpUtil
+		{
+			get { return _util; }
+		}
+
 		internal ObservableCollection<MessageItem> MessageItems
 		{
 			get

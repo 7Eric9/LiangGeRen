@@ -63,6 +63,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Data\InfoDataManager.cs" />
+    <Compile Include="Data\InfoItemsProvider.cs" />
     <Compile Include="Data\MoodDataManager.cs" />
     <Compile Include="Data\HttpDataProvider.cs" />
     <Compile Include="Data\MessageItem.cs" />

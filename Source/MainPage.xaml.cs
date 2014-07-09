@@ -21,6 +21,7 @@ namespace LiangGeRen
 	public partial class MainPage : Window
 	{
 		private MoodDataManager _moodDataManager;
+		private InfoDataManager _infoDataManger;
 		public MainPage()
 		{
 			InitializeComponent();
@@ -30,19 +31,37 @@ namespace LiangGeRen
 			abc.Add(new MessageItem("Eric", ";ojojonihuuhnlijioo", "2 messages"));
 			abc.Add(new MessageItem("Kitty", "fjiowfejowjfkefjweifjifjowjflwf", "2 messages"));
 			abc.Add(new MessageItem("Eric", "fjiowfejowjfkefjweifjifjowjflwf", "2 messages"));
-			listBox1.ItemsSource = abc;
+			messageListBox.ItemsSource = abc;
 		}
 
 		internal MainPage(MoodDataManager mdManager)
 		{
 			_moodDataManager = mdManager;
+			_infoDataManger = new InfoDataManager(mdManager.HttpUtil);
 			InitializeComponent();
 			InitialList();
 		}
 
 		private void InitialList()
 		{
-			listBox1.ItemsSource = _moodDataManager.MessageItems;
+			messageListBox.ItemsSource = _moodDataManager.MessageItems;
+			UpdateInfo();
+			infoListBox.ItemsSource = _infoDataManger.MessageItems;
+			//Action InitialInfo = UpdateInfo;
+			//InitialInfo.BeginInvoke(UpdateInfoCompleted, InitialInfo);
+		}
+
+		private void UpdateInfo()
+		{
+			_infoDataManger.UpdateInfo();
+		}
+
+		private void UpdateInfoCompleted(IAsyncResult asynResult)
+		{
+			if (asynResult == null)
+				return;
+			(asynResult.AsyncState as Action).EndInvoke(asynResult);
+			//infoListBox.ItemsSource = _infoDataManger.MessageItems;
 		}
 
 		private void Button_Click(object sender, RoutedEventArgs e)
@@ -58,6 +77,12 @@ namespace LiangGeRen
 		private void DragWindow(object sender, MouseButtonEventArgs e)
 		{
 			this.DragMove();
+		}
+
+		private void infoButton_Click(object sender, RoutedEventArgs e)
+		{
+			messageListBox.Visibility = System.Windows.Visibility.Collapsed;
+			infoListBox.Visibility = System.Windows.Visibility.Visible;
 		}
 	}
 }
