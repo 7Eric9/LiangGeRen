@@ -54,6 +54,7 @@ namespace LiangGeRen.Data
 			var updatedMessages = _provider.GetMessageItems(_util.Request(MoodURL));
 			_provider.MessageItems.Clear();
 			_provider.MessageItems.AddRange(updatedMessages);
+			_startPage = 2;
 		}
 
 		public void GetMoreMessage()
@@ -61,6 +62,33 @@ namespace LiangGeRen.Data
 			string actualURL = MoodURL + "?page=" + _startPage.ToString();
 			var moreMessages = _provider.GetMessageItems(_util.Request(actualURL));
 			_provider.MessageItems.AddRange(moreMessages);
+			_startPage++;
+		}
+
+		public void ProcessReplyMessage()
+		{
+			foreach (var messageItem in _provider.MessageItems)
+			{
+				var stream = _util.Request(messageItem.ReplyMessageURL); 
+				_provider.PocessReplyMessages(stream);
+			}
+		}
+
+		public void PostMessage()
+		{
+			List<string> parameters 
+				= new List<string>() { "public", "说", "couple", "该消息来自客户端！" };
+			_util.PostMessage(parameters);
+		}
+
+		public void PostReply(MessageItem messageItem, string content)
+		{
+			const string prefixUrl = "http://old.liageren.com/say/";
+			const string pieceUrl = "/comments/create_say_comment?feed_id=";
+			var keys = messageItem.ReplyMessageKey.Split(',');
+			string url = prefixUrl + keys[0] + pieceUrl + keys[1];
+			List<string> ms = new List<string>(){content, _provider.CoupleID};
+			_util.PostReply(url, ms);
 		}
 
 	}

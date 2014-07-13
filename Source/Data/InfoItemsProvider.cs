@@ -47,7 +47,8 @@ namespace LiangGeRen.Data
 				{
 					readyToReadName = true;
 				}
-				if (content.Contains("class=\"c_tx\""))
+				if (content.Contains("class=\"c_tx\"")
+					|| content.Contains("class='c_tx'"))
 				{
 					int startIndex = content.IndexOf(">") + 1;
 					int endIndex = content.IndexOf("</a>");

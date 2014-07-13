@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -74,6 +75,19 @@ namespace LiangGeRen
 		private bool isProcessLogin = false;
 		private void OnClick(object sender, RoutedEventArgs e)
 		{
+			//InfoItemsProvider idf = new InfoItemsProvider();
+			//ObservableCollection<MessageItem> sss = new ObservableCollection<MessageItem>();
+			//FileStream fileStream = new FileStream(@"C:\Users\Eric\Desktop\new  2.html", FileMode.Open);
+			//try
+			//{
+			//	sss.AddRange(idf.GetInfoItems(fileStream));
+			//	// read from file or write to file
+			//}
+			//finally
+			//{
+			//	fileStream.Close();
+			//}
+			//return;
 			if (!isProcessLogin)
 			{
 				WriteToUserNamesFile(userName.Text);
@@ -151,7 +165,9 @@ namespace LiangGeRen
 		{
 			IntPtr p = System.Runtime.InteropServices.Marshal.SecureStringToBSTR(passWord.SecurePassword);  
             string pw = System.Runtime.InteropServices.Marshal.PtrToStringBSTR(p);
+			Thread.Sleep(5000);
 			return _moodeDataManager.Login(userName, pw);
+			
 		}
 
 		const string UserNameKeyWords = "邮箱";
@@ -179,6 +195,11 @@ namespace LiangGeRen
 			userNames.Remove((sender as Button).Tag.ToString());
 			UpdateUserNamesFile();
 			
+		}
+
+		private void DragWindow(object sender, MouseButtonEventArgs e)
+		{
+			this.DragMove();
 		}
 	}
 

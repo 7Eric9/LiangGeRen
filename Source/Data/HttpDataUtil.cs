@@ -64,7 +64,7 @@ namespace LiangGeRen.Data
 				//请求方式
 				request.Method = "Get";
 				//是否保持常连接
-				request.KeepAlive = false;
+				request.KeepAlive = true;
 				request.Headers.Add("Accept-Encoding", "gzip, deflate");
 
 				HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -134,5 +134,40 @@ namespace LiangGeRen.Data
 			string authenticityToken = temp.Substring(tokenIndex + keyWord.Length + 1);
 			return authenticityToken;
 		}
+
+		#region sennd new message
+		const string sendMessageURL = "http://old.liageren.com/javascripts/suisui_say";
+
+		internal void PostMessage(List<string> parameters)
+		{
+			StringBuilder data = new StringBuilder();
+			Encoding encode = new UTF8Encoding();
+			data.AppendFormat("authenticity_token={0}&say[send_to]={1}&say[qualifier]={2}&say[send_to]={3}&say[body]={4}",
+				HttpUtility.UrlEncode(AuthenticityToken, encode),
+				HttpUtility.UrlEncode(parameters[0], encode),
+				HttpUtility.UrlEncode(parameters[1], encode),
+				HttpUtility.UrlEncode(parameters[2], encode), 
+				HttpUtility.UrlEncode(parameters[3], encode)
+				);
+
+			var stream = Post(sendMessageURL, data.ToString());
+			stream.Dispose();
+		}
+		#endregion
+
+		#region send new reply
+		internal void PostReply(string url, List<string> parameters)
+		{
+			StringBuilder data = new StringBuilder();
+			Encoding encode = new UTF8Encoding();
+			data.AppendFormat("comment={0}&comment_to={1}",
+				HttpUtility.UrlEncode(parameters[0], encode),
+				HttpUtility.UrlEncode(parameters[1], encode)
+				);
+
+			var stream = Post(url, data.ToString());
+			stream.Dispose();
+		}
+		#endregion
 	}
 }

@@ -90,8 +90,8 @@
                      Style="{StaticResource BoyTheme2List}"
                  ItemTemplate="{StaticResource messageItemViewTemplate}"/>
 
-        <Button Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource MessageIcon}" Margin="0,10,32,10" />
+        <Button Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource MessageIcon}" Margin="0,10,32,10" Click="Button_Click_1" />
         <Button x:Name="infoButton" Grid.Row="4" Grid.Column="5" Grid.ColumnSpan="3" Style="{StaticResource InfoIcon}" Margin="39,10,16,0" Click="infoButton_Click"/>
-        <Image Grid.ColumnSpan="3" Grid.Column="4" HorizontalAlignment="Left" Height="75" Margin="40,5,0,0" Grid.Row="1" VerticalAlignment="Top" Width="84" Source="Images/boy/cloud.png" RenderTransformOrigin="0.432,0.24" Stretch="Fill"/>
+        <!--<Image Grid.ColumnSpan="3" Grid.Column="4" HorizontalAlignment="Left" Height="75" Margin="40,5,0,0" Grid.Row="1" VerticalAlignment="Top" Width="84" Source="Images/boy/cloud.png" RenderTransformOrigin="0.432,0.24" Stretch="Fill"/>-->
     </Grid>
 </Window>

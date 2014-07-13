@@ -14,6 +14,11 @@ namespace LiangGeRen.Data
 
 		InfoItemsProvider _provider;
 		HttpDataUtil _util;
+
+		public InfoDataManager()
+		{ 
+		}
+
 		public InfoDataManager(HttpDataUtil HttpUtil)
 		{
 			_provider = new InfoItemsProvider();

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using LiangGeRen.Data;
+using LiangGeRen.Extension;
 
 namespace LiangGeRen
 {
@@ -46,7 +49,21 @@ namespace LiangGeRen
 		{
 			messageListBox.ItemsSource = _moodDataManager.MessageItems;
 			UpdateInfo();
-			infoListBox.ItemsSource = _infoDataManger.MessageItems;
+			InfoItemsProvider idf = new InfoItemsProvider();
+			ObservableCollection<MessageItem> sss = new ObservableCollection<MessageItem>();
+			FileStream fileStream = new FileStream(@"C:\Users\Eric\Desktop\new  2.html", FileMode.Open);
+			try
+			{
+				sss.AddRange(idf.GetInfoItems(fileStream));
+				// read from file or write to file
+			}
+			finally
+			{
+				fileStream.Close();
+			}
+
+			//infoListBox.ItemsSource = _infoDataManger.MessageItems;
+			infoListBox.ItemsSource = sss;
 			//Action InitialInfo = UpdateInfo;
 			//InitialInfo.BeginInvoke(UpdateInfoCompleted, InitialInfo);
 		}
@@ -83,6 +100,10 @@ namespace LiangGeRen
 		{
 			messageListBox.Visibility = System.Windows.Visibility.Collapsed;
 			infoListBox.Visibility = System.Windows.Visibility.Visible;
+		}
+
+		private void Button_Click_1(object sender, RoutedEventArgs e)
+		{
 		}
 	}
 }
