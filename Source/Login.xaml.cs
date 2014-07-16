@@ -45,7 +45,7 @@ namespace LiangGeRen
 			user = new User();
 			Binding binding = new Binding("IsLoginSucceed") { Source = user };
 			binding.Converter = new VisibiltyConverter();
-			errorData.SetBinding(Label.VisibilityProperty, binding);
+			errorDataPanel.SetBinding(Label.VisibilityProperty, binding);
 
 			if (File.Exists(userNamesFile))
 			{
@@ -72,7 +72,6 @@ namespace LiangGeRen
 			_moodeDataManager.InitailRequest();
 		}
 
-		private bool isProcessLogin = false;
 		private void OnClick(object sender, RoutedEventArgs e)
 		{
 			//InfoItemsProvider idf = new InfoItemsProvider();
@@ -88,14 +87,17 @@ namespace LiangGeRen
 			//	fileStream.Close();
 			//}
 			//return;
-			if (!isProcessLogin)
-			{
-				WriteToUserNamesFile(userName.Text);
-				isProcessLogin = true;
-				Func<string, bool> login = Login;
-				string un = userName.Text;
-				IAsyncResult asynResult = login.BeginInvoke(un, LoginCompleted, login);
-			}
+			Login();
+		}
+
+		private void Login()
+		{
+			user.IsLoginSucceed = true;//reset it.
+			loginBtn.IsEnabled = false;
+			WriteToUserNamesFile(userName.Text);
+			Func<string, bool> login = Login;
+			string un = userName.Text;
+			IAsyncResult asynResult = login.BeginInvoke(un, LoginCompleted, login);
 		}
 
 		private void WriteToUserNamesFile(string name)
@@ -144,6 +146,7 @@ namespace LiangGeRen
 			}
 			else
 			{
+				loginBtn.Dispatcher.BeginInvoke(new Action(() => { loginBtn.IsEnabled = true; }), null);
 				userName.Dispatcher.BeginInvoke(new Action(() => { userName.Text = string.Empty; }), null);
 				user.IsLoginSucceed = false;
 			}
@@ -200,6 +203,12 @@ namespace LiangGeRen
 		private void DragWindow(object sender, MouseButtonEventArgs e)
 		{
 			this.DragMove();
+		}
+
+		private void passWord_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.Key == Key.Enter)
+				Login();
 		}
 	}
 
