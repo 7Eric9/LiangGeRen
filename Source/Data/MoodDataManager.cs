@@ -45,6 +45,7 @@ namespace LiangGeRen.Data
 			if (_provider.IsValid)
 			{
 				_provider.MessageItems.AddRange(messages);
+				ProcessReplyMessage(_provider.MessageItems);
 			}
 			return _provider.IsValid;
 		}
@@ -61,16 +62,17 @@ namespace LiangGeRen.Data
 		{
 			string actualURL = MoodURL + "?page=" + _startPage.ToString();
 			var moreMessages = _provider.GetMessageItems(_util.Request(actualURL));
+			ProcessReplyMessage(moreMessages);
 			_provider.MessageItems.AddRange(moreMessages);
 			_startPage++;
 		}
 
-		public void ProcessReplyMessage()
+		public void ProcessReplyMessage(IList<MessageItem> messgeItems)
 		{
-			foreach (var messageItem in _provider.MessageItems)
+			foreach (var messageItem in messgeItems)
 			{
 				var stream = _util.Request(messageItem.ReplyMessageURL); 
-				_provider.PocessReplyMessages(stream);
+				messageItem.ReplyMessages = _provider.PocessReplyMessages(stream);
 			}
 		}
 

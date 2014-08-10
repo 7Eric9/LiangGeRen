@@ -21,6 +21,15 @@
             </DoubleAnimation>
 
         </Storyboard>
+
+        <Storyboard x:Key="FadeIn">
+            <DoubleAnimation From="0" 
+        To="1"
+            Storyboard.TargetProperty="(Window.Opacity)" 
+            Duration="0:0:1">
+            </DoubleAnimation>
+
+        </Storyboard>
         <sys:String x:Key="ErroData">NoError</sys:String>
         <local:VisibiltyConverter x:Key="VisiblityConverter" />
         <local:LengthConverter x:Key="lenConverter"/>
@@ -158,10 +167,41 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="toolBtnKey" TargetType="Button">
+            <Setter Property="Background" Value="#5DC3E1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}"  SnapsToDevicePixels="true">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Opacity" Value="0.8"></Setter>
+                    <Setter Property="Cursor" Value="Hand"></Setter>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="true">
+                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5"></Setter>
+                    <Setter Property="Button.RenderTransform">
+                        <Setter.Value>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="0.9" ScaleY="0.9"/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     <Window.Triggers>
         <EventTrigger RoutedEvent="Window.Loaded">
-            <BeginStoryboard Storyboard="{StaticResource flyinStoryboard}" />
+            <BeginStoryboard Storyboard="{StaticResource FadeIn}" />
         </EventTrigger>
     </Window.Triggers>
     <Grid >
@@ -171,11 +211,53 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
-        <DockPanel Grid.Row="0" Background="#5DC3E1">
-            <DockPanel.Effect>
+        <StackPanel Grid.Row="0" Background="#5DC3E1" Orientation="Horizontal">
+            <StackPanel.Effect>
                 <DropShadowEffect Opacity="0.5" BlurRadius="3" Direction="330" ShadowDepth="4"/>
-            </DockPanel.Effect>
-        </DockPanel>
+            </StackPanel.Effect>
+            <Button Height="28" Width="28" 
+                    HorizontalAlignment="Right" VerticalAlignment="Top" 
+                    Style="{StaticResource toolBtnKey}" Margin="285,0,0,0"
+                    Click="minimizeClick">
+                <Canvas x:Name="canvas2" 
+							HorizontalAlignment="Left" 
+							Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=Height}"
+							Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=Width}"
+							VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
+                    <Canvas.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Canvas.RenderTransform>
+                    <Line X1="0" Y1="21" X2="{Binding RelativeSource={RelativeSource AncestorType={x:Type Canvas}}, Path=Width}" Y2="21" StrokeThickness="4" Stroke="White"></Line>
+                </Canvas>
+            </Button>
+            <Button x:Name="closeBtn" Height="28" Width="28" 
+                    Margin="0" HorizontalAlignment="Right" VerticalAlignment="Top" 
+                    Style="{StaticResource toolBtnKey}"
+                    Click="closeClick">
+                <Canvas x:Name="canvas1" 
+							HorizontalAlignment="Left" 
+							Height="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=Height}"
+							Width="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}}, Path=Width}"
+							VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
+                    <Canvas.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </Canvas.RenderTransform>
+                    <Line X1="0" Y1="0" X2="{Binding RelativeSource={RelativeSource AncestorType={x:Type Canvas}}, Path=Width}" Y2="{Binding ElementName=canvas1, Path=Height}" StrokeThickness="4" Stroke="White"></Line>
+                    <Line X1="0" Y1="{Binding RelativeSource={RelativeSource AncestorType={x:Type Canvas}}, Path=Height}" X2="{Binding ElementName=canvas1, Path= Width}" Y2="0" StrokeThickness="4" Stroke="White"></Line>
+                </Canvas>
+
+            </Button>
+        </StackPanel>
         <Canvas Grid.Row="1">
             <ComboBox x:Name="userName" Text="邮箱" Foreground="Gray"  
 				Height="23" Canvas.Left="81" Canvas.Top="21" Width="179" IsEditable="True" 
@@ -195,7 +277,7 @@
             <Button x:Name="loginBtn" Background="#1DC3E1" Content="登录" HorizontalAlignment="Center" Width="147" Height="35" Click="OnClick" Style="{DynamicResource LoginButtonStyle}" Foreground="White" FontSize="22" FontFamily="Microsoft YaHei" />
         </DockPanel>
         <StackPanel x:Name="errorDataPanel" Grid.Row="3" Visibility="Collapsed" Style="{StaticResource erroDataMoving}">
-        <Label x:Name="errorData" Content="邮箱格式错误！" HorizontalAlignment="Left" Margin="10,0,0,0"  VerticalAlignment="Top"/>
+            <Label x:Name="errorData" Content="邮箱格式错误！" HorizontalAlignment="Left" Margin="10,0,0,0"  VerticalAlignment="Top"/>
         </StackPanel>
     </Grid>
 </Window>

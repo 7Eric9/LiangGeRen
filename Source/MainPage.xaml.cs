@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -45,9 +46,17 @@ namespace LiangGeRen
 			InitialList();
 		}
 
+		internal static String FirstComingInGuy
+		{ get; set; }
+
 		private void InitialList()
 		{
-			messageListBox.ItemsSource = _moodDataManager.MessageItems;
+			if (_moodDataManager.MessageItems.Count > 0)
+			{
+				messageListBox.ItemsSource = _moodDataManager.MessageItems;
+				FirstComingInGuy = _moodDataManager.MessageItems.First().Name;
+				messageListBox.DataContext = this;
+			}
 			UpdateInfo();
 			InfoItemsProvider idf = new InfoItemsProvider();
 			ObservableCollection<MessageItem> sss = new ObservableCollection<MessageItem>();
@@ -83,7 +92,7 @@ namespace LiangGeRen
 
 		private void Button_Click(object sender, RoutedEventArgs e)
 		{
-			this.Close();
+			Application.Current.Shutdown();
 		}
 
 		private void minimumBtn_Click(object sender, RoutedEventArgs e)
@@ -104,6 +113,49 @@ namespace LiangGeRen
 
 		private void Button_Click_1(object sender, RoutedEventArgs e)
 		{
+			_moodDataManager.GetMoreMessage();
+		}
+
+		const string InitailText = "回复:";
+		private void replyTB_GotFocus(object sender, RoutedEventArgs e)
+		{
+			var textBox = (TextBox)sender;
+			if (textBox.Text == InitailText)
+			{
+				textBox.Text = string.Empty;
+			}
+		}
+
+		private void submit(object sender, RoutedEventArgs e)
+		{
+			var replyContentTextBox = messageListBox.ItemTemplate.FindName("replyContent", messageListBox) as TextBox;
+			if (replyContentTextBox != null
+				&& replyContentTextBox.Text != string.Empty
+				&& replyContentTextBox.Text != InitailText)
+			{
+ 
+			}
+		}
+	}
+
+	public class ColorConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			var name = (string)value;
+			var firstComingGuy = MainPage.FirstComingInGuy;
+			SolidColorBrush solidColorBrush = new SolidColorBrush();
+			
+			if (name.Equals(firstComingGuy))
+				solidColorBrush.Color = Color.FromRgb(0, 159, 214); 
+			else
+				solidColorBrush.Color = Color.FromRgb(0, 193, 164);
+			return solidColorBrush;
+		}
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+		{
+			return new NotImplementedException();
 		}
 	}
 }

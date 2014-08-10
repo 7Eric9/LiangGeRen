@@ -210,6 +210,16 @@ namespace LiangGeRen
 			if (e.Key == Key.Enter)
 				Login();
 		}
+
+		private void minimizeClick(object sender, RoutedEventArgs e)
+		{
+			this.WindowState = System.Windows.WindowState.Minimized;
+		}
+
+		private void closeClick(object sender, RoutedEventArgs e)
+		{
+			Application.Current.Shutdown();
+		}
 	}
 
 	internal class User : INotifyPropertyChanged
