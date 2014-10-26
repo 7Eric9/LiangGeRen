@@ -100,8 +100,11 @@
                         <ColumnDefinition></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Row="0" Grid.Column="0" Grid.RowSpan="2">
-                        <Line X1="0" Y1="0"
+                        <!--<Line X1="0" Y1="0"
                   X2="0" Y2="{Binding RelativeSource={RelativeSource AncestorType=StackPanel}, Path=ActualHeight}"
+                  Stroke="{Binding Path=UserName, Converter={StaticResource ColorConverter}}" StrokeThickness="5"/>-->
+                        <Line X1="0" Y1="0"
+                  X2="0" Y2="{Binding ElementName=ReplyContentPanel, Path=ActualHeight}"
                   Stroke="{Binding Path=UserName, Converter={StaticResource ColorConverter}}" StrokeThickness="5"/>
                     </StackPanel>
                     <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Top">
@@ -109,7 +112,7 @@
                     </StackPanel>
 
                     <StackPanel Grid.Row="1" Grid.Column="1" VerticalAlignment="Top">
-                        <TextBlock Margin="5,0,0,0"
+                        <TextBlock x:Name="txtBlock" Margin="5,0,0,0"
                                    Text="{Binding Content}"
                                    TextWrapping="Wrap"></TextBlock>
                     </StackPanel>
@@ -131,9 +134,14 @@
                 </StackPanel>
                 <StackPanel Grid.Row="1">
                     <TextBlock Margin="4,15,0,0" Text="{Binding Path=Message}" TextWrapping="Wrap" FontSize="13" FontFamily="Arial" Foreground="Black"/>
-                    <Label Content="{Binding Path=ReplyMessageCount}" HorizontalAlignment="Left" VerticalAlignment="Top" Background="{x:Null}" BorderThickness="0" Margin="0,5,0,10" Foreground="Black"/>
+                    <Label Content="{Binding Path=ReplyMessageCount}" 
+                           HorizontalAlignment="Left" 
+                           VerticalAlignment="Top" 
+                           Background="{x:Null}" 
+                           BorderThickness="0" 
+                           Margin="0,5,0,10" Foreground="Black" MouseDown="Reply_MouseDown"/>
                 </StackPanel>
-                <StackPanel Grid.Row="2" HorizontalAlignment="Left" Margin="0,5,0,0">
+                <StackPanel x:Name="ReplyMessagePanel" Grid.Row="2" HorizontalAlignment="Left" Margin="0,5,0,0" Visibility="Collapsed">
                     <ListBox ItemsSource="{Binding Path=ReplyMessages}"
                              ItemTemplate="{StaticResource ReplyContentTemplate}"
                              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -183,6 +191,7 @@
 
         <ListBox Grid.Row="2" Grid.ColumnSpan="8" x:Name="messageListBox"
                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 
                      Style="{StaticResource BoyTheme2List}"
                  ItemTemplate="{StaticResource messageItemViewTemplate}"
                  ItemContainerStyle="{StaticResource ItemContainerStyle}"/>

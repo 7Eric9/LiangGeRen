@@ -155,9 +155,10 @@ namespace LiangGeRen.Data
 						message = message.Substring(0, message.IndexOf("<a class=\\\"c_tx"));
 					}
 					message = 
-						message.Replace("\\n", string.Empty)
+						(message.Replace("\\n", string.Empty)
 						.Replace("\n", string.Empty)
-						.Replace("\t", string.Empty);
+						.Replace("\t", string.Empty)).Trim();
+
 					replyMessages.Add(new ReplyMessage(name, message));
 					name = string.Empty;
 					message = string.Empty;

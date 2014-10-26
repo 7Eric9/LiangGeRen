@@ -136,6 +136,19 @@ namespace LiangGeRen
  
 			}
 		}
+
+		private void Reply_MouseDown(object sender, MouseButtonEventArgs e)
+		{
+
+			var grid = ((sender as FrameworkElement).Parent as FrameworkElement).Parent as Grid;
+			if (grid != null)
+			{
+				var replyMessagePanel = grid.FindName("ReplyMessagePanel") as StackPanel;
+				replyMessagePanel.Visibility = replyMessagePanel.Visibility == System.Windows.Visibility.Collapsed ?
+				System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed;
+			}
+			
+		}
 	}
 
 	public class ColorConverter : IValueConverter
